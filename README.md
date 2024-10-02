@@ -8,7 +8,7 @@ Repository for locally bootstrapping 925r and Yayata.
 - [Taskfile](https://taskfile.dev/) - [Installation](https://taskfile.dev/installation/#install-script)
 - [Docker with Compose v2](https://docs.docker.com/compose/) - [Installation](https://docs.docker.com/compose/install/linux/) - make sure docker can run without sudo 
 - [Helm](https://helm.sh/) - [Installation](https://helm.sh/docs/intro/install/)
-- [k3d](https://k3d.io/v5.7.4/) - [Installation](https://github.com/k3d-io/k3d) (Use install script on github)
+- [k3d](https://k3d.io/v5.7.4/) - [Installation](https://github.com/k3d-io/k3d) (See 'get' section)
 - [Kubectl](https://kubernetes.io/docs/reference/kubectl/) - [Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 
 ## Installation
@@ -53,7 +53,8 @@ If this task is completed do:
 ```
 task start
 ```
-DISCLAIMER: The first time you do ``` task start ``` the ninetofiver pods will crashloop for a while until LDAP an Mysql pods are up. These pods spin up a bit slower because their images need to be pulled from an online repo the first time.
+DISCLAIMER: The first time you do ``` task start ``` the ninetofiver pods will crashloop for a while until the LDAP and Mysql pods are up. 
+These pods spin up a bit slower because their images need to be pulled from an online repo the first time.
 
 To check on your running pods you can do:
 ```
