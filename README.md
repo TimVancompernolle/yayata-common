@@ -19,7 +19,7 @@ Create a new directory for all the 925r and yayata repositories to live in:
 mkdir -p ~/inuits/yayata-application
 ```
 
-Cd to that repo
+Cd to that directory
 
 ```
 cd ~/inuits/yayata-application
