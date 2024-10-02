@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ninetofiver
+  name: ninetofiver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ninetofiver
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ninetofiver
+    spec:
+      containers:
+        - args:
+            - bash
+            - -c
+            - |2
+                set -e
+                python manage.py migrate
+                echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell || true
+                echo "from oauth2_provider.models import Application; from django.contrib.auth import get_user_model; User = get_user_model(); client = Application.objects.create(user=User.objects.filter(is_staff=True)[0], name='application', client_id='application-id', client_secret='application-secret', authorization_grant_type=Application.GRANT_PASSWORD)" | python manage.py shell || true
+                python manage.py runserver 0.0.0.0:8000
+          env:
+            - name: MYSQL_USER
+              value: '{{ tpl .Values.ninetofiver.env.MYSQL_USER . }}'
+            - name: MYSQL_PASSWORD
+              value: '{{ tpl .Values.ninetofiver.env.MYSQL_PASSWORD . }}'
+            - name: MYSQL_DATABASE
+              value: '{{ tpl .Values.ninetofiver.env.MYSQL_DATABASE . }}'
+            - name: MYSQL_PORT
+              value: '{{ tpl .Values.ninetofiver.env.MYSQL_PORT . }}'
+            - name: PYTHONUNBUFFERED
+              value: '{{ tpl .Values.ninetofiver.env.PYTHONUNBUFFERED . }}'
+            - name: DJANGO_SETTINGS_MODULE
+              value: '{{ tpl .Values.ninetofiver.env.DJANGO_SETTINGS_MODULE . }}'
+            - name: MYSQL_HOST
+              value: '{{ tpl .Values.ninetofiver.env.MYSQL_HOST . }}'
+            - name: DJANGO_CONFIGURATION
+              value: '{{ tpl .Values.ninetofiver.env.DJANGO_CONFIGURATION . }}'
+            - name: CFG_FILE_PATH
+              value: '{{ tpl .Values.ninetofiver.env.CFG_FILE_PATH . }}'
+            - name: PYTHONDONTWRITEBYTECODE
+              value: '{{ tpl .Values.ninetofiver.env.PYTHONDONTWRITEBYTECODE . }}'
+
+          name: ninetofiver
+          image: "{{ .Values.ninetofiver.image.repository }}:{{ .Values.ninetofiver.image.tag }}"
+      restartPolicy: Always
+

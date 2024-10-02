@@ -1,0 +1,87 @@
+version: '3.38'
+
+vars:
+  DOCKER: 'docker'
+  COMPOSE: '{{.DOCKER}} compose'
+
+dotenv: ['.env.local', '.env', '.env.dist'] # first file takes precedence
+
+includes:
+  git:
+    taskfile: ./Tasks/GitTasks.yml
+
+tasks:
+  default:
+    cmds:
+      - "'{{.TASK_EXE}}' --list-all"
+
+  clone:
+    deps:
+      - task: git:clone
+        vars: { URL: '{{.NINETOFIVER_URL}}', DIRECTORY: '{{.NINETOFIVER_DIRECTORY}}', BRANCH: '{{.NINETOFIVER_BRANCH}}' }
+      - task: git:clone
+        vars: { URL: '{{.YAYATA_URL}}', DIRECTORY: '{{.YAYATA_DIRECTORY}}', BRANCH: '{{.YAYATA_BRANCH}}' }
+
+  pull:
+    deps:
+      - task: git:pull
+        vars: { URL: '{{.NINETOFIVER_URL}}', DIRECTORY: '{{.NINETOFIVER_DIRECTORY}}', BRANCH: '{{.NINETOFIVER_BRANCH}}' }
+      - task: git:pull
+        vars: { URL: '{{.YAYATA_URL}}', DIRECTORY: '{{.YAYATA_DIRECTORY}}', BRANCH: '{{.YAYATA_BRANCH}}' }
+
+  prepare:
+    deps:
+      - task: clone
+
+  build:
+    deps:
+      - task: prepare
+    cmds:
+      - cd "{{.NINETOFIVER_DIRECTORY}}" && "{{.TASK_EXE}}" build
+      - cd "{{.YAYATA_DIRECTORY}}" && "{{.TASK_EXE}}" build
+
+  create-cluster:
+    desc: Create K3D cluster and registry & add images to registry
+    deps:
+      - task: build
+    cmds:
+ #     - k3d registry create {{.K3D_REGISTRY_HOST}} -p {{.K3D_REGISTRY_PORT}}
+ #     - k3d cluster create {{.K3D_CLUSTER_NAME}} -p "{{.K3D_CLUSTER_PORT_MAP}}" --registry-use k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}
+      - "{{.DOCKER}} tag ninetofiver-ninetofiver:latest k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/ninetofiver:latest"
+      - "{{.DOCKER}} push k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/ninetofiver:latest"
+      - "{{.DOCKER}} tag yayata-yayata:latest k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/yayata:latest"
+      - "{{.DOCKER}} push k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/yayata:latest"
+
+  start:
+    desc: start helm to run app
+    cmds:
+      - helm install yayata-app chart
+  stop:
+    desc: remove helm app
+    cmds: 
+      - helm uninstall yayata-app
+
+#  ensure-containerd-setup:
+#    desc: Ensure containerd service is properly configured (runs only if needed)
+#    status:
+#      - grep -q 'LimitNOFILE=65535' /usr/lib/systemd/system/containerd.service
+#    cmds:
+#      - sudo sed -i 's/LimitNOFILE=infinity/LimitNOFILE=65535/' /usr/lib/systemd/system/containerd.service
+#      - sudo systemctl daemon-reload
+#      - sudo systemctl restart containerd
+
+  remove:
+    requires:
+      vars: [ NINETOFIVER_DIRECTORY, YAYATA_DIRECTORY ]
+    deps:
+      - task: git:remove
+        vars: { DIRECTORY: '{{.NINETOFIVER_DIRECTORY}}' }
+      - task: git:remove
+        vars: { DIRECTORY: '{{.YAYATA_DIRECTORY}}' }
+
+  clean:
+    desc: Clean up
+    cmds:
+      - task: remove
+      - if test -f .env; then mv .env .env.bck; fi
+

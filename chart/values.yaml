@@ -1,0 +1,26 @@
+ninetofiver:
+  image:
+    repository: k3d-registry.localhost:5000/ninetofiver
+    tag: latest
+  env:
+    CFG_FILE_PATH: /etc/925r/config.yml
+    DJANGO_CONFIGURATION: Dev
+    DJANGO_SETTINGS_MODULE: ninetofiver.settings
+    MYSQL_DATABASE: ninetofiverdatabase
+    MYSQL_HOST: mysql
+    MYSQL_PASSWORD: ninetofiverpassword
+    MYSQL_PORT: "3306" 
+    MYSQL_USER: ninetofiveruser
+    PYTHONDONTWRITEBYTECODE: "1"
+    PYTHONUNBUFFERED: "1"
+
+mysql:
+  image:
+    repository: mysql
+    tag: "8.0.35"
+  env:
+    MYSQL_DATABASE: ninetofiverdatabase
+    MYSQL_PASSWORD: ninetofiverpassword
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: ninetofiveruser
+

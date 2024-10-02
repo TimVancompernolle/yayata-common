@@ -1,0 +1,47 @@
+version: '3.38'
+
+tasks:
+
+  clone:
+    requires:
+      vars: [ URL, DIRECTORY, BRANCH ]
+    preconditions:
+      - sh: "test '{{.URL}}' != '' "
+        msg: "URL was not provided"
+      - sh: "test '{{.DIRECTORY}}' != '' "
+        msg: "DIRECTORY was not provided"
+      - sh: "test '{{.BRANCH}}' != '' "
+        msg: "BRANCH was not provided"
+    status:
+      - test -d '{{.DIRECTORY}}'
+    cmds:
+      - git clone --branch '{{.BRANCH}}' --single-branch '{{.URL}}' '{{.DIRECTORY}}'
+    generates:
+      - '{{.DIRECTORY}}'
+
+  pull:
+    requires:
+      vars: [ URL, DIRECTORY, BRANCH ]
+    preconditions:
+      - sh: "test '{{.URL}}' != '' "
+        msg: "URL was not provided"
+      - sh: "test '{{.DIRECTORY}}' != '' "
+        msg: "DIRECTORY was not provided"
+      - sh: "test '{{.BRANCH}}' != '' "
+        msg: "BRANCH was not provided"
+    deps:
+      - task: clone
+        vars: { URL: '{{.URL}}', DIRECTORY: '{{.DIRECTORY}}', BRANCH: '{{.BRANCH}}' }
+    cmds:
+      - cd '{{.DIRECTORY}}' && git pull '{{.URL}}' '{{.BRANCH}}'
+
+  remove:
+    requires:
+      vars: [ DIRECTORY ]
+    preconditions:
+      - sh: "test '{{.DIRECTORY}}' != '' "
+        msg: "DIRECTORY was not provided"
+    status:
+      - test ! -d '{{.DIRECTORY}}'
+    cmds:
+      - rm -rf '{{.DIRECTORY}}'
