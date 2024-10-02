@@ -6,7 +6,7 @@ Repository for locally bootstrapping 925r and Yayata.
 
 - [Git](https://git-scm.com/) - [Installation](https://git-scm.com/download/linux)
 - [Taskfile](https://taskfile.dev/) - [Installation](https://taskfile.dev/installation/#install-script)
-- [Docker with Compose v2](https://docs.docker.com/compose/) - [Installation](https://docs.docker.com/compose/install/linux/) - make sure docker service and socket is running
+- [Docker with Compose v2](https://docs.docker.com/compose/) - [Installation](https://docs.docker.com/compose/install/linux/) - make sure docker can run without sudo 
 - [Helm](https://helm.sh/) - [Installation](https://helm.sh/docs/intro/install/)
 - [k3d](https://k3d.io/v5.7.4/) - [Installation](https://github.com/k3d-io/k3d) (Use install script on github)
 - [Kubectl](https://kubernetes.io/docs/reference/kubectl/) - [Installation](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
@@ -25,10 +25,10 @@ Cd to that repo
 cd ~/inuits/yayata-application
 ```
 
-Clone this repository [GitHub]():
+Clone this repository:
 
 ```
-git clone --branch feature/metalarend/local-setup --single-branch https://github.com/inuits/yayata-common.git
+git clone https://github.com/TimVancompernolle/yayata-common.git
 ```
 
 Step inside the new directory.
@@ -53,26 +53,26 @@ If this task is completed do:
 ```
 task start
 ```
+DISCLAIMER: The first time you do ``` task start ``` the ninetofiver pods will crashloop for a while until LDAP an Mysql pods are up. These pods spin up a bit slower because their images need to be pulled from an online repo the first time.
 
-This will spin up the yayata application with the help of Helm
-
+To check on your running pods you can do:
+```
+kubectl get pods -w
+```
+ When all pods are running: 
+ 
 Open your browser on [http://ninetofiver.localhost](http://ninetofiver.localhost) for the 925r application.
 
 Open your browser on [http://yayata.localhost](http://yayata.localhost) for the Yayata application.
 
-The credentials for Yayata can be found in the 925r .env file.
+The default credentials for Yayata and 925r are admin admin (logging in for the first time into yayata and 925r also takes a little while not sure why)
 
 If you want to stop and remove the pods: 
 
 ```
 task stop
 ```
-## Monitor
-
-To check on your running pods you can do:
-```
-kubectl get pods
-```
+## Troubleshoot
 
 ```
 kubectl logs [podIdentifier]
@@ -89,22 +89,3 @@ If you want to change the configuration of 925r or the mysql application
 ```
 vi yayata-common/task/chart/values.yaml
 ```
-
-
-### Compose
-
-Start both 925r and Yayata:
-
-```
-task start
-```
-```
-task stop
-```         
-Open your browser on [http://localhost:8000](http://localhost:8000) for the 925r application.
-
-Open your browser on [http://localhost:8080](http://localhost:8080) for the Yayata application.
-
-The credentials for Yayata can be found in the 925r .env file.
-
-For more details, check the 925r and Yayata README.md files.
