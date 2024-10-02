@@ -87,5 +87,15 @@ kubectl describe pod [podIdentifier]
 If you want to change the configuration of 925r or the mysql application
 
 ```
-vi yayata-common/task/chart/values.yaml
+vi yayata-common/chart/values.yaml
+```
+Or you can fiddle with the helm charts in
+```
+vi yayata-common/chart/templates
+```
+
+But make sure to run
+
+```
+task upgrade after changing configurations
 ```
