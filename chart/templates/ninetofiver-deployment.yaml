@@ -25,7 +25,7 @@ spec:
                 python manage.py migrate
                 echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin')" | python manage.py shell || true
                 echo "from oauth2_provider.models import Application; from django.contrib.auth import get_user_model; User = get_user_model(); client = Application.objects.create(user=User.objects.filter(is_staff=True)[0], name='application', client_id='application-id', client_secret='application-secret', authorization_grant_type=Application.GRANT_PASSWORD)" | python manage.py shell || true
-                python manage.py runserver 0.0.0.0:8000
+                python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000
           env:
             - name: MYSQL_USER
               value: '{{ tpl .Values.ninetofiver.env.MYSQL_USER . }}'

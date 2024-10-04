@@ -38,7 +38,7 @@ tasks:
       - task: prepare
     cmds:
       - cd "{{.NINETOFIVER_DIRECTORY}}" && "{{.TASK_EXE}}" build
-      - cd "{{.YAYATA_DIRECTORY}}" && "{{.TASK_EXE}}" build
+  #    - cd "{{.YAYATA_DIRECTORY}}" && "{{.TASK_EXE}}" build
 
   create-cluster:
     desc: Create K3D cluster and registry & add images to registry
@@ -65,14 +65,6 @@ tasks:
     desc: upgrade helm deployment after changing charts/values
     cmds:
       - helm upgrade -f chart/values.yaml yayata-app chart
-#  ensure-containerd-setup:
-#    desc: Ensure containerd service is properly configured (runs only if needed)
-#    status:
-#      - grep -q 'LimitNOFILE=65535' /usr/lib/systemd/system/containerd.service
-#    cmds:
-#      - sudo sed -i 's/LimitNOFILE=infinity/LimitNOFILE=65535/' /usr/lib/systemd/system/containerd.service
-#      - sudo systemctl daemon-reload
-#      - sudo systemctl restart containerd
 
   remove:
     requires:
