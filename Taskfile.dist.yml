@@ -38,7 +38,7 @@ tasks:
       - task: prepare
     cmds:
       - cd "{{.NINETOFIVER_DIRECTORY}}" && "{{.TASK_EXE}}" build
-  #    - cd "{{.YAYATA_DIRECTORY}}" && "{{.TASK_EXE}}" build
+      - cd "{{.YAYATA_DIRECTORY}}" && "{{.TASK_EXE}}" build
 
   create-cluster:
     desc: Create K3D cluster and registry & add images to registry
