@@ -53,7 +53,7 @@ If this task is completed do:
 ```
 task start
 ```
-DISCLAIMER: The first time you do ``` task start ``` the ninetofiver pods will crashloop for a while until the LDAP and Mysql pods are up. 
+__DISCLAIMER__: The first time you do ``` task start ``` the ninetofiver pod will crashloop for a while until the LDAP and MYSQL pods are up. 
 These pods spin up a bit slower because their images need to be pulled from an online repo the first time.
 
 To check on your running pods you can do:
@@ -73,12 +73,37 @@ If you want to stop and remove the pods:
 ```
 task stop
 ```
-## Troubleshoot
 
+## Add minio s3 as media bucket
+If you want the media files to be stored in an S3 like bucket locally execute the following steps: 
+
+Run the following command to spin up the minio server & to create the bucket. 
+```
+task start-minio
+```
+
+Make sure to uncomment the code lines 354-375 in `yayata-application/925r` 
+
+Once the pods are running browse to http://minio.localhost/
+The credentials are: 
+```
+Username: minioadmin
+Password: minioadmin
+```
+
+You can test the connection by adding a company in 925r and loading up a picture as logo. 
+After that you will see the logo in the media files bucket on minio. 
+
+## Troubleshoot
+Check the ID of a pod with the following command:
+```
+kubectl get pods -w
+```
+Check logs for a pod with the following command:
 ```
 kubectl logs [podIdentifier]
 ```
-
+Check the description of a pod with the following command: 
 ```
 kubectl describe pod [podIdentifier]
 ```
@@ -95,8 +120,14 @@ Or you can fiddle with the helm charts in
 vi yayata-common/chart/templates
 ```
 
-But make sure to run
-
+Make sure to run the following command after changing the charts or values file
 ```
-task upgrade after changing configurations
+task upgrade
+```
+
+If you change settings in the 925r or yayata directories, the images have to be rebuilt. 
+This can be done by: 
+```
+task remove-cluster
+task create-cluster
 ```
