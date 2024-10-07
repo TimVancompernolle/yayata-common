@@ -38,19 +38,19 @@ tasks:
       - task: prepare
     cmds:
       - cd "{{.NINETOFIVER_DIRECTORY}}" && "{{.TASK_EXE}}" build
-      - cd "{{.YAYATA_DIRECTORY}}" && "{{.TASK_EXE}}" build
+ #     - cd "{{.YAYATA_DIRECTORY}}" && "{{.TASK_EXE}}" build
 
   create-cluster:
     desc: Create K3D cluster and registry & add images to registry
     deps:
       - task: build
     cmds:
-      - k3d registry create {{.K3D_REGISTRY_HOST}} -p {{.K3D_REGISTRY_PORT}}
-      - k3d cluster create {{.K3D_CLUSTER_NAME}} -p "{{.K3D_CLUSTER_PORT_MAP}}" --registry-use k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}
+#      - k3d registry create {{.K3D_REGISTRY_HOST}} -p {{.K3D_REGISTRY_PORT}}
+#      - k3d cluster create {{.K3D_CLUSTER_NAME}} -p "{{.K3D_CLUSTER_PORT_MAP}}" --registry-use k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}
       - "{{.DOCKER}} tag ninetofiver-ninetofiver:latest k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/ninetofiver:latest"
       - "{{.DOCKER}} push k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/ninetofiver:latest"
-      - "{{.DOCKER}} tag yayata-yayata:latest k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/yayata:latest"
-      - "{{.DOCKER}} push k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/yayata:latest"
+ #     - "{{.DOCKER}} tag yayata-yayata:latest k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/yayata:latest"
+ #     - "{{.DOCKER}} push k3d-{{.K3D_REGISTRY_HOST}}:{{.K3D_REGISTRY_PORT}}/yayata:latest"
 
   start:
     desc: start helm deployment

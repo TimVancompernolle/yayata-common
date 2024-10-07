@@ -15,7 +15,5 @@ spec:
               mc alias set myminio http://minio:9000 minioadmin minioadmin
               mc admin user svcacct add myminio minioadmin --access-key "minio" --secret-key "minio123321"
               mc mb myminio/media
-              mc mb myminio/static
               mc anonymous set public myminio/media
-              mc anonymous set public myminio/static
       restartPolicy: OnFailure
