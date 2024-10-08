@@ -82,7 +82,7 @@ Run the following command to spin up the minio server & to create the bucket.
 task start-minio
 ```
 
-Make sure to uncomment the code lines 354-375 in `yayata-application/925r` 
+Make sure to uncomment the code lines 354-375 in `yayata-application/925r/ninetofiver/settings.py` 
 
 Once the pods are running browse to http://minio.localhost/
 The credentials are: 
@@ -93,6 +93,12 @@ Password: minioadmin
 
 You can test the connection by adding a company in 925r and loading up a picture as logo. 
 After that you will see the logo in the media files bucket on minio. 
+
+To stop & remove the minio pod: 
+```
+task stop-minio
+```
+
 
 ## Troubleshoot
 Check the ID of a pod with the following command:
