@@ -16,14 +16,37 @@ spec:
       labels:
         app: minio
     spec:
-       containers:
-         - name: minio
-           image: quay.io/minio/minio:latest
-           command:
-           - bash
-           - -c
-           args:
-           - minio server data/ --console-address ":9001"
-           ports:
-             - containerPort: 9000
-             - containerPort: 9001
+      containers:
+        - name: minio
+          image: quay.io/minio/minio:latest
+          command:
+            - bash
+            - -c
+          args:
+            - minio server data/ --console-address ":9001"
+          ports:
+            - containerPort: 9000
+            - containerPort: 9001
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-bucket-creation
+spec:
+  template:
+    spec:
+      containers:
+        - name: mc
+          image: quay.io/minio/mc:latest  # Use the MinIO Client image
+          command:
+            - bash
+            - -c          
+          args:
+            - |
+              sleep 30
+              mc alias set myminio http://minio:9000 minioadmin minioadmin
+              mc admin user svcacct add myminio minioadmin --access-key "minio" --secret-key "minio123321"
+              mc mb myminio/media
+              mc anonymous set public myminio/media
+      restartPolicy: OnFailure
+
