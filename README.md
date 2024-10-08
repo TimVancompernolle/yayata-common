@@ -74,6 +74,12 @@ If you want to stop and remove the pods:
 task stop
 ```
 
+If you want to remove the cluster and registry: 
+
+```
+task remove-cluster
+```
+
 ## Add minio s3 as media bucket
 If you want the media files to be stored in an S3 like bucket locally execute the following steps: 
 
